@@ -1,10 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-  <title>My First GitHub Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HELIX Market Intelligence</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Hello Sanjeev 🚀</h1>
-  <p>Your GitHub Pages site is live.</p>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">HELIX Market Trends</div>
+      <h1>Market Intelligence Executive Dashboard</h1>
+      <p>Multi-source intelligence across raw materials, logistics, semiconductors, labor, policy, and demand.</p>
+    </div>
+
+    <div class="actions">
+      <button id="periodToggle">YoY</button>
+      <button id="briefBtn">AI Brief</button>
+      <button id="themeToggle">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="brief-card">
+      <div>
+        <span class="live">LIVE VIEW</span>
+        <h2>Executive Signal</h2>
+        <p id="execSignal">
+          AI infrastructure demand, export controls, and memory pricing remain the highest-signal watch areas.
+        </p>
+      </div>
+    </section>
+
+    <section class="correlation-card">
+      <div class="section-head">
+        <div>
+          <h2>Cross-Correlation Analysis</h2>
+          <p>Overlay two indicators to test directional relationships.</p>
+        </div>
+      </div>
+
+      <div class="correlation-grid">
+        <select id="seriesA"></select>
+        <select id="seriesB"></select>
+        <select id="lookback">
+          <option>90D</option>
+          <option>1Y</option>
+          <option>3Y</option>
+        </select>
+      </div>
+
+      <canvas id="correlationChart" height="120"></canvas>
+      <div id="correlationResult" class="correlation-result"></div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="markets">Markets & Materials</button>
+      <button class="tab" data-tab="labor">Labor & Demand</button>
+      <button class="tab" data-tab="policy">Policy & Risk</button>
+    </nav>
+
+    <section id="markets" class="tab-panel active">
+      <div class="grid">
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="live">LIVE</span>
+              <h3>Raw Materials</h3>
+              <p>Yahoo Finance · LME style composite</p>
+            </div>
+            <button onclick="downloadCSV('rawMaterials')">CSV</button>
+          </div>
+          <div id="rawMaterials"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Logistics & Freight</h3>
+              <p>FBX · SCFI lanes</p>
+            </div>
+            <button onclick="downloadCSV('freight')">CSV</button>
+          </div>
+          <div id="freight"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Semiconductor Spot Pricing</h3>
+              <p>DRAMeXchange · TrendForce style snapshot</p>
+            </div>
+            <button onclick="downloadCSV('semis')">CSV</button>
+          </div>
+          <div id="semis"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="ai">AI STEERABLE</span>
+              <h3>PCB Supply Chain</h3>
+              <p>Generated intelligence placeholder</p>
+            </div>
+          </div>
+          <input id="pcbPrompt" placeholder="Focus on European suppliers, 8-layer rigid only..." />
+          <button onclick="regeneratePCB()">Regenerate</button>
+          <div id="pcb"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="labor" class="tab-panel">
+      <div class="grid">
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Labor Rates — China & SE Asia</h3>
+              <p>Composite wage index</p>
+            </div>
+          </div>
+          <div id="laborRates"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Hyperscaler CapEx</h3>
+              <p>AMZN · MSFT · GOOGL · META</p>
+            </div>
+          </div>
+          <div id="capex"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Data Center Power Demand</h3>
+              <p>IEA · Uptime Institute style snapshot</p>
+            </div>
+          </div>
+          <div id="power"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="policy" class="tab-panel">
+      <div class="grid">
+        <article class="card wide">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>US–China Tariff Matrix</h3>
+              <p>USTR · Section 301 / 232</p>
+            </div>
+          </div>
+          <div id="tariffs"></div>
+        </article>
+
+        <article class="card wide">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Strategic Export Controls</h3>
+              <p>BIS · MOFCOM · EU Dual-Use</p>
+            </div>
+          </div>
+          <div id="exportControls"></div>
+        </article>
+
+        <article class="card wide">
+          <div class="section-head">
+            <div>
+              <span class="snapshot">SNAPSHOT</span>
+              <h3>Emerging Technology Radar</h3>
+              <p>TRL vs CAGR vs 2030 market size</p>
+            </div>
+          </div>
+          <div id="techRadar"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="briefModal">
+    <h2>AI Executive Brief</h2>
+    <p>
+      Demand-side pressure from AI infrastructure remains the strongest upward force across memory, power, and advanced components.
+      Policy and export controls remain the highest-risk external variable for supply continuity.
+      Recommended action: monitor DDR5/HBM pricing, logistics lanes, and supplier exposure weekly.
+    </p>
+    <button onclick="briefModal.close()">Close</button>
+  </dialog>
+
+  <script src="script.js"></script>
 </body>
 </html>
